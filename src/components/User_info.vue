@@ -16,24 +16,35 @@
                 </div>               
             </section>
             <div class="title">最近创建的话题</div>
-            <section id="latestTopicBuilt" class="topic">        
-                <ul>
+            <section id="latestTopicBuilt" class="topic">
+                <ul v-if="all">
                     <li v-for="recent in userInfo.recent_topics">
                         <img :src="recent.author.avatar_url" class="avatar">
-                        <router-link :to="{name:'content', params: {id: recent.id}}" class="ContentTitle">
-                            <span >{{recent.title}}</span>
+                        <router-link :to="{name:'content', params: {id: recent.id,name: recent.author.loginname}}" class="ContentTitle">
+                            <span class="topicTitle">{{recent.title}}</span>
+                        </router-link>                       
+                        <span class="last_reply">{{recent.last_reply_at | showTime}}</span>
+                    </li>
+                </ul>        
+                <ul v-else>
+                    <li v-for="recent in currentTopic">
+                        <img :src="recent.author.avatar_url" class="avatar">
+                        <router-link :to="{name:'content', params: {id: recent.id,name: recent.author.loginname}}" class="ContentTitle">
+                            <span class="topicTitle">{{recent.title}}</span>
                         </router-link>                       
                         <span class="last_reply">{{recent.last_reply_at | showTime}}</span>
                     </li>
                 </ul>
+                <div v-if="showMore" class="showMore"
+                @click="showMoreLi()"><span>{{showString?'展示全部':'展示部分'}}»</span></div>
             </section>
             <div class="title">最近参与的话题</div>
             <section id="latestTopicIn" class="topic">         
                 <ul>
                     <li v-for="recent in userInfo.recent_replies">
                         <img :src="recent.author.avatar_url" class="avatar">
-                        <router-link :to="{name:'content', params: {id: recent.id}}" class="ContentTitle">
-                            <span>{{recent.title}}</span>
+                        <router-link :to="{name:'content', params: {id: recent.id,name: recent.author.loginname}}" class="ContentTitle">
+                            <span class="topicTitle">{{recent.title}}</span>
                         </router-link>
                         <span class="last_reply">{{recent.last_reply_at | showTime}}</span>
                     </li>
@@ -48,7 +59,12 @@ export default {
   data(){
       return {
           complete:true,
-          userInfo: {}
+          userInfo: {
+              recent_topics: [],
+          },
+          showMore: false,
+          showString: true,
+          all: false
       }
   },
   methods: {
@@ -60,6 +76,20 @@ export default {
                 this.userInfo = res.data.data
               }
           })
+      },
+      showMoreLi(){
+          this.showString = !this.showString
+          this.all = !this.all
+      }
+  },
+  computed: {
+      currentTopic(){
+          if (this.userInfo.recent_topics.length > 5) {
+              this.showMore = true
+              return this.userInfo.recent_topics.slice(0,5)
+          } else {
+              return this.userInfo.recent_topics
+          }
       }
   },
   beforeMount(){
@@ -122,12 +152,27 @@ export default {
 .mainPage .loginTime {
     color: #ababab;
 }
+.showMore {
+    padding: 10px;
+    font-size: 14px;
+}
+.showMore span:hover{
+    color: #08c;
+    cursor: pointer;
+}
 .topic li{
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px 10px;
-    border-bottom: 0.1px solid rgb(225, 225, 225)
+    border-bottom: 0.1px solid rgb(225, 225, 225);
+    
+}
+.topic li a {
+    flex: 1;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 .topic .avatar {
     display: block;

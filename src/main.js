@@ -61,4 +61,9 @@ new Vue({
   router,
   components: { App },
   template: '<App/>',
+  data(){
+    return {
+      bus: new Vue()
+    }
+  },
 })

@@ -38,8 +38,8 @@ export default {
         this.allButtons.pop()
         this.allButtons.unshift(this.allButtons[0] - 1)
       }
-
-      this.$emit('change', value)
+      let newValue = {page:value}
+      this.$emit('change', newValue)
     },
     perviousButton(){
       let value = this.currentButton - 1
@@ -54,8 +54,18 @@ export default {
     firstButton(){
       this.allButtons = [1, 2, 3, 4, 5]
       this.currentButton = 1
-      this.$emit('change', 1)
+      this.beforeButton = false
+      let value = {page:1,tab: 'all',selected: 0}
+      this.$emit('change', value)
     }
+  },
+  created(){
+    this.$root.bus.$on('backfirst', ()=>{
+      this.firstButton()
+    })
+    this.$root.bus.$on('changeCurrentButton', (value)=>{
+      this.currentButton = value
+    })
   }
 }
 </script>
@@ -72,6 +82,9 @@ button {
   background: white;
   color: #778087;
   outline: none;
+}
+button:hover {
+  cursor: pointer;
 }
 
 .currentButton {

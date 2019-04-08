@@ -1,21 +1,18 @@
 <template>
   <div class="header">
-      <router-link :to="{name:'root'}" class="img">
-          <img src="../assets/cnodejs_light.svg" alt="">
+      <router-link :to="{name:'root'}" class="img" >
+          <img src="../assets/cnodejs_light.svg" @click="backFirst">
       </router-link>
-      <ul>
-        <li><a href="">首页</a></li>
-        <li><a href="">新手入门</a></li>
-        <li><a href="">API</a></li>
-        <li><a href="">关于</a></li>
-        <li><a href="">注册</a></li>
-        <li><a href="">登录</a></li>
-      </ul>
   </div>
 </template>
 <script>
 export default {
   name: 'cnode_header',
+  methods: {
+    backFirst(){
+      this.$root.bus.$emit('backfirst')
+    }
+  }
 }
 </script>
 <style scoped>
